@@ -33,6 +33,9 @@ def main() -> None:
     line = LINE.strip()
     assert line, "line must not be blank"
     assert "\n" not in line, "line must be a single line"
+    assert not any(ord(ch) < 0x20 for ch in line), (
+        "line must not contain control characters"
+    )
     assert len(line) <= MAX_CHARS, (
         f"line is {len(line)} characters, over the {MAX_CHARS} limit"
     )
