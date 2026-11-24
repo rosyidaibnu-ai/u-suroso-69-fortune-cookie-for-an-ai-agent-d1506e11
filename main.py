@@ -44,7 +44,16 @@ def main() -> None:
     os.chmod(OUTPUT_PATH, 0o644)
     # Read it back: prove the gate will see exactly the line, nothing else.
     with open(OUTPUT_PATH, "r", encoding="utf-8") as f:
-        assert f.read() == line + "\n", "entry.txt does not match the line"
+        content = f.read()
+    assert content == line + "\n", "entry.txt does not match the line"
+    # The gate counts the file as written, newline included, so check the
+    # file itself -- not just the line -- against the 140-character cap.
+    assert len(content) <= MAX_CHARS, (
+        f"entry.txt is {len(content)} characters, over the {MAX_CHARS} limit"
+    )
+    assert oct(os.stat(OUTPUT_PATH).st_mode & 0o777) == "0o644", (
+        "entry.txt is not world-readable (mode 0644)"
+    )
 
 
 if __name__ == "__main__":
